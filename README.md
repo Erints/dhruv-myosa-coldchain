@@ -1,4 +1,4 @@
-
+---
 publishDate: 2026-08-24T00:00:00Z
 title: "DHRUV: Last-Mile Vaccine Cold Chain Monitoring System with Firebase IoT"
 excerpt: "An IoT sensor-fusion node built on MYOSA with Firebase Realtime Cloud Sync to prevent vaccine degradation during rural last-mile transport."
@@ -51,17 +51,17 @@ According to the World Health Organization (WHO), **up to 50% of vaccines are wa
 ### **Images**
 
 <p align="center">
-  <img src="/dhruv-myosa-coldchain/dhruv-cover.jpg" width="800"><br/>
+  <img src="/assets/images/dhruv-myosa-coldchain/dhruv-cover.jpg" width="800"><br/>
   <i>Figure 1: DHRUV Node hardware setup integrated inside the MYOSA enclosure alongside design notes, showing live OLED status.</i>
 </p>
 
 <p align="center">
-  <img src="/dhruv-myosa-coldchain/dhruv-dashboard.jpg" width="800"><br/>
+  <img src="/assets/images/dhruv-myosa-coldchain/dhruv-dashboard.jpg" width="800"><br/>
   <i>Figure 2: PHC Base Station Web Dashboard connected live to node ASHA-KL05, rendering Chain Integrity Index (75%) and active alerts.</i>
 </p>
 
 <p align="center">
-  <img src="/dhruv-myosa-coldchain/dhruv-firebase.jpg" width="800"><br/>
+  <img src="/assets/images/dhruv-myosa-coldchain/dhruv-firebase.jpg" width="800"><br/>
   <i>Figure 3: Firebase Realtime Database cloud backend streaming live telemetry coordinates and breach events in real time.</i>
 </p>
 
@@ -118,69 +118,41 @@ ESP32 3.3V         ----> VCC of all sensor modules & OLED
 ESP32 GND          ----> GND of all sensor modules & OLED
 ESP32 Pin 2        ----> Red Alert LED Indicator
 
-Compiling & Flashing Firmware with Firebase
- * Open DHRUV_Firmware/DHRUV_Firmware.ino in Arduino IDE.
- * Update FIREBASE_HOST with your Firebase Realtime Database domain.
- * Select board ESP32 Dev Module and click Upload.
-Tech Stack
- * Microcontroller & Hardware: ESP32 NodeMCU, SSD1306 0.96" OLED, BMP180 Barometric Temp/Pressure, MPU6050/6500 6-Axis Accelerometer, APDS9960 Sensor.
- * IoT Cloud Infrastructure: Firebase Realtime Database (RTDB), HTTPS REST API Client.
- * Firmware: Embedded C++ / Arduino Framework, Wire I2C, ESP32 NVS Preferences, ESP32 WebServer.
- * Web Dashboard: HTML5, CSS3, Modern Vanilla JavaScript, Firebase Web SDK v9, Chart.js.
-Requirements / Installation
-List all dependencies clearly:
-# Arduino IDE Libraries Required:
-- Adafruit GFX Library
-- Adafruit SSD1306
-- Adafruit BMP085 Library
-- HTTPClient & WiFi (Built into ESP32 core)
 
-File Structure
-dhruv-myosa-coldchain/
-├── dhruv-cover.jpg
-├── dhruv-dashboard.jpg
-├── dhruv-firebase.jpg
-├── dhruv-demonstration-video.mp4
-├── dhruv-myosa-coldchain.md
-└── README.md
+### Compiling & Flashing Firmware with Firebase
 
-License
-This project is open-source under the MIT License.
-- **Live Stream Path (`/deliveries/{node_id}/telemetry`):** Pushes live temperature, pressure, G-force, light, and score every 2 seconds.
-- **Event Audit Stream (`/deliveries/{node_id}/breaches`):** Pushes individual breach records instantly when detected.
-- **Offline Flush Engine:** Automatically flushes queued Flash NVS breach logs to Firebase as soon as an Internet connection is detected.
+1. Open `DHRUV_Firmware/DHRUV_Firmware.ino` in Arduino IDE.
+2. Update `FIREBASE_HOST` with your Firebase Realtime Database domain.
+3. Select board **ESP32 Dev Module** and click **Upload**.
 
 ---
 
-## Usage Instructions
+## Tech Stack
 
-### Hardware Wiring Setup (MYOSA Platform)
+* **Microcontroller & Hardware:** ESP32 NodeMCU, SSD1306 0.96" OLED, BMP180 Barometric Temp/Pressure, MPU6050/6500 6-Axis Accelerometer, APDS9960 Sensor.
+* **IoT Cloud Infrastructure:** Firebase Realtime Database (RTDB), HTTPS REST API Client.
+* **Firmware:** Embedded C++ / Arduino Framework, Wire I2C, ESP32 NVS Preferences, ESP32 WebServer.
+* **Web Dashboard:** HTML5, CSS3, Modern Vanilla JavaScript, Firebase Web SDK v9, Chart.js.
 
-Connect the MYOSA sensor boards to the ESP32 motherboard via I2C bus:
+---
 
-```plaintext
-ESP32 Pin 21 (SDA) ----> BMP180 SDA | MPU6050 SDA | APDS9960 SDA | OLED SDA
-ESP32 Pin 22 (SCL) ----> BMP180 SCL | MPU6050 SCL | APDS9960 SCL | OLED SCL
-ESP32 3.3V         ----> VCC of all sensor modules & OLED
-ESP32 GND          ----> GND of all sensor modules & OLED
-ESP32 Pin 2        ----> Red Alert LED Indicator
-Compiling & Flashing Firmware with Firebase
-Open DHRUV_Firmware/DHRUV_Firmware.ino in Arduino IDE.
-Update FIREBASE_HOST with your Firebase Realtime Database domain.
-Select board ESP32 Dev Module and click Upload.
-Tech Stack
-Microcontroller & Hardware: ESP32 NodeMCU, SSD1306 0.96" OLED, BMP180 Barometric Temp/Pressure, MPU6050/6500 6-Axis Accelerometer, APDS9960 Sensor.
-IoT Cloud Infrastructure: Firebase Realtime Database (RTDB), HTTPS REST API Client.
-Firmware: Embedded C++ / Arduino Framework, Wire I2C, ESP32 NVS Preferences, ESP32 WebServer.
-Web Dashboard: HTML5, CSS3, Modern Vanilla JavaScript, Firebase Web SDK v9, Chart.js.
-Requirements / Installation
+## Requirements / Installation
+
 List all dependencies clearly:
+
+```bash
 # Arduino IDE Libraries Required:
 - Adafruit GFX Library
 - Adafruit SSD1306
 - Adafruit BMP085 Library
 - HTTPClient & WiFi (Built into ESP32 core)
-File Structure
+
+
+---
+
+## File Structure
+
+```plaintext
 dhruv-myosa-coldchain/
 ├── dhruv-cover.jpg
 ├── dhruv-dashboard.jpg
@@ -188,6 +160,9 @@ dhruv-myosa-coldchain/
 ├── dhruv-demonstration-video.mp4
 ├── dhruv-myosa-coldchain.md
 └── README.md
-License
-This project is open-source under the MIT License.
 
+---
+
+## License
+
+This project is open-source under the **MIT License**.
