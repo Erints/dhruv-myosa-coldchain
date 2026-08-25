@@ -1,207 +1,118 @@
-<div align="center">
+# DHRUV - Last-Mile Vaccine Cold Chain Monitoring System (MYOSA 6.0)
 
-# 🩺 DHRUV
-### Dynamic Hybrid Real-time Uninterrupted Vaccine-chain Monitor
-
-**A sensor-fusion IoT node that protects vaccines during the last mile of India's cold chain**
-
-[![MYOSA 6.0](https://img.shields.io/badge/MYOSA-6.0-0284c7.svg)](https://blog.myosa-sensors.org/)
-[![Platform: ESP32](https://img.shields.io/badge/Platform-ESP32-red.svg)](https://www.espressif.com/)
+[![MYOSA 6.0](https://img.shields.io/badge/MYOSA-6.0--Shortlisted-0284c7.svg)](https://blog.myosa-sensors.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Platform: ESP32](https://img.shields.io/badge/Platform-ESP32-red.svg)](https://www.espressif.com/)
 
-[Overview](#-overview) • [Problem](#-the-problem) • [Solution](#-the-solution) • [How It Works](#-how-it-works) • [Tech Stack](#-tech-stack) • [Setup](#-setup--installation) • [Demo](#-live-demo) • [Team](#-team)
+**Team:** Arin T S & Andrewjos Sebastian  
+**Institution:** Saintgits College of Engineering (Autonomous), Kottayam, Kerala  
+**Mentor:** Dr. Abraham George  
 
-</div>
-
----
-
-## 📖 Overview
-
-<!-- EDIT: 2-3 sentence pitch judges will read first -->
-**DHRUV** is a compact, sensor-fusion monitoring node that sits inside a vaccine carrier bag and tracks the conditions vaccines experience on their final journey — from a Primary Health Centre (PHC) to a child's doorstep. It detects temperature and humidity breaches, tampering, rough handling, and seal failures in real time, works fully offline in the field, and automatically syncs a complete delivery report to a supervisor dashboard the moment connectivity returns.
-
-Built on the **MYOSA sensor platform**, DHRUV converts raw multi-sensor data into a single actionable number — the **Chain Integrity Score (0–100%)** — so health workers and supervisors instantly know whether a vaccine is still safe to administer.
+> **DHRUV** is a sensor-fusion IoT monitoring system engineered specifically for ASHA (Accredited Social Health Activist) workers delivering vaccines to remote rural India. Powered strictly by the **MYOSA 6.0 hardware kit**, DHRUV monitors thermal stability, tamper events, physical handling shocks, and seal degradation—calculating a dynamic **Chain Integrity Score (0–100%)** to ensure no spoiled vaccine reaches a child.
 
 ---
 
-## 🚨 The Problem
+## 🏆 Why DHRUV is Built to Win MYOSA 6.0
 
-<!-- EDIT: keep or replace with your own framing/stats -->
-India's immunization programme depends on vaccines staying between **2°C and 8°C** from factory to child. District-level cold storage is well monitored — but the **last mile**, where an ASHA (Accredited Social Health Activist) worker carries vaccines in an insulated bag to remote villages, has **zero sensor coverage**.
-
-During this journey:
-- 🌡️ **Thermal excursions** — heat exposure pushes internal temperature outside the safe zone
-- 🔓 **Unrecorded tampering** — the bag is opened repeatedly, letting warm air in
-- 📉 **Rough handling** — drops and vibrations on rural terrain damage vaccine vials
-- 💧 **Seal degradation** — worn seals let in humidity over time
-
-None of this is currently detected. According to the WHO, up to **50% of vaccines are wasted globally each year**, with cold chain failure a leading cause — and the child often still receives the (now ineffective) dose, believing they're protected.
+1. **Direct High-Impact Real World Problem:** Solves last-mile vaccine cold chain failures (responsible for up to 50% global vaccine wastage per WHO).
+2. **100% Kit Hardware Compliance:** Employs strictly the kit sensors (ESP32, BMP180, MPU6050/6500, APDS9960, and SSD1306 OLED) without requiring extra external modules.
+3. **Novel Sensor Fusion Matrix:** 
+   - **BMP180:** Temperature ($2^\circ\text{C}-8^\circ\text{C}$ safe range) & Altitude/Barometric route tracking.
+   - **MPU6050/6500:** Accelerometer shock & drop impact magnitude ($>2.5\text{G}$).
+   - **APDS9960:** Dual ambient light lux spike (box opening tamper) + Proximity seal gap + **Touchless gesture screen navigation** (SWIPE hands-free while wearing gloves!).
+4. **Dynamic Chain Integrity Score Algorithm:** Converts complex raw multi-sensor streams into an instant, actionable 0–100% score for health supervisors.
+5. **Hybrid Offline-Online Architecture:** Operates 100% offline in non-connected rural terrain with NVS flash memory logging, and auto-syncs to the PHC Base Station Web Dashboard upon return.
 
 ---
 
-## 💡 The Solution
+## 📌 Hardware Pinout Table
 
-DHRUV is not trying to replace industrial cold chain systems — it targets the **one link with zero sensor-based coverage today**: the worker's bag itself.
+All sensors connect over the shared **I2C Bus (SDA = GPIO 21, SCL = GPIO 22)**:
 
-- 📡 Monitors temperature, humidity, pressure, tampering, and shock **continuously**, with no connectivity required
-- 🚨 Alerts the worker instantly via OLED display and LED indicator on any breach
-- 💾 Logs every event with a timestamp to local flash memory — fully functional offline
-- ☁️ Auto-syncs to a base station dashboard over WiFi the moment the worker returns to the PHC
-- 📊 Gives supervisors a real-time **Chain Integrity Score** and full event timeline per delivery
+| Module / Sensor | I2C Address | ESP32 Pin | Function |
+| :--- | :--- | :--- | :--- |
+| **SSD1306 OLED (0.96")** | `0x3C` | SDA: 21, SCL: 22 | Live Telemetry & Status Display |
+| **BMP180 Pressure** | `0x77` | SDA: 21, SCL: 22 | Precision Temperature & Altitude |
+| **MPU6050 / MPU6500** | `0x68` / `0x69` | SDA: 21, SCL: 22 | 6-Axis Acceleration & Drop Shock |
+| **APDS9960 Sensor** | `0x39` | SDA: 21, SCL: 22 | Light Lux (Tamper), Proximity & Gestures |
+| **Built-in / Alert LED** | Direct GPIO | GPIO 2 | Red Alert Indicator (Flashes on Breach) |
 
 ---
 
-## ⚙️ How It Works
+## 🚀 Quick Start & Installation
 
-### Sensor Fusion Matrix
+### 1. ESP32 Firmware Upload
+1. Open `DHRUV_Firmware/DHRUV_Firmware.ino` in Arduino IDE.
+2. Select Board: **ESP32 Dev Module**.
+3. Install standard libraries: `Adafruit_SSD1306`, `Adafruit_GFX`, `Adafruit_BMP085`, `Wire`, `WiFi`, `WebServer`, `Preferences`.
+4. Click **Upload** to flash the ESP32.
 
-| Sensor | Measures | Breach Condition | Response |
-|---|---|---|---|
-| **DHT22** | Temperature (°C) & Humidity (%RH) | Temp outside 2–8°C, or RH > 85% | `ALERT: Thermal Excursion` |
-| **APDS9960** (light) | Ambient light (lux) | Lux spike inside bag | `ALERT: Tamper Detected` |
-| **APDS9960** (proximity) | Distance to inner tray/lid | Gap or displacement | `ALERT: Seal Breach` |
-| **MPU6050** | 3-axis acceleration (G) | Impact above threshold | `ALERT: Mishandling` |
-| **BMP180** | Barometric pressure/altitude | Abnormal altitude shift | `LOG: Route Deviation` |
+### 2. PHC Base Station Dashboard Setup
+1. Power up the ESP32 node.
+2. Connect your laptop/phone to WiFi Access Point: `DHRUV_Vaccine_Node` (Password: `myosa2026`).
+3. Open browser and go to `http://192.168.4.1/` (or open `web_dashboard/index.html` locally).
 
-<!-- EDIT: replace with your final threshold values once field-tested -->
+---
 
-### Chain Integrity Score
+## 🎬 3-Minute Interactive Judge Demonstration Guide
 
-Starting at 100%, the score deducts for each breach type based on severity and duration, giving a single number that reflects whether the vaccine is still viable:
+When presenting DHRUV to competition judges, follow this step-by-step interactive demonstration script:
 
 ```
-Score = 100 − (Thermal Penalty + Tamper Penalty + Shock Penalty + Seal Penalty)
+Step 1: Normal State Overview (0:00 - 0:45)
+- Show DHRUV node inside the vaccine carrier box.
+- Show OLED display reading 100% Chain Integrity Score and status [EXCELLENT].
+- Show Base Station Web Dashboard connected live with green status pill.
+
+Step 2: Thermal Excursions Demo (0:45 - 1:30)
+- Place warm hand over node (or click "Heat Breach (+12.5°C)" on Dashboard).
+- BMP180 detects temperature rising above 8°C.
+- Alert LED flashes red instantly, OLED updates to "BREACH: TEMP_EXCURSION".
+- Chain Integrity Score drops dynamically on OLED and Dashboard.
+
+Step 3: Box Opening & Tamper Demo (1:30 - 2:00)
+- Open carrier box lid (or click "Lid Open (180 Lux)" on Dashboard).
+- APDS9960 detects light lux spike (>60 Lux).
+- Instant "BOX_OPEN_TAMPER" event is logged with timestamp into Flash memory.
+
+Step 4: Drop Impact Shock Demo (2:00 - 2:30)
+- Gently tap/drop carrier box (or click "Drop Shock (4.2G)" on Dashboard).
+- MPU6050 registers G-force impact > 2.5G.
+- Severity reading and shock drop penalty are logged.
+
+Step 5: Touchless Gesture Navigation & Auto-Sync (2:30 - 3:00)
+- Swipe hand over APDS9960 sensor to switch OLED display pages hands-free.
+- Click "Export Audit CSV" on the Web Dashboard to demonstrate generating the final official cold chain delivery report for PHC supervisors!
 ```
 
-### Architecture
+---
+
+## 📑 File Structure
 
 ```
- ┌─────────────────────┐        offline         ┌──────────────────────┐
- │   DHRUV Node         │  ── flash logging ──▶  │   ASHA Worker's Bag   │
- │  (ESP32 + sensors)   │                        │   (field deployment)  │
- └──────────┬───────────┘                        └──────────────────────┘
-            │ WiFi sync on PHC return
-            ▼
- ┌─────────────────────┐
- │  Base Station        │
- │  Web Dashboard        │
- │  (Chain Integrity,    │
- │   event log, alerts)  │
- └─────────────────────┘
+Myosa/
+├── DHRUV_Firmware/
+│   └── DHRUV_Firmware.ino         # Production ESP32 Arduino Firmware
+├── web_dashboard/
+│   ├── index.html                 # Base Station Dashboard HTML
+│   ├── style.css                  # Glassmorphism Styling
+│   └── app.js                     # Live Telemetry & Simulation Controller
+├── dhruv-myosa-coldchain.md       # Official MYOSA Blog Submission Markdown
+├── README.md                      # Complete Project & Hardware Guide
+└── test_code.ino                  # Original test sketch
 ```
 
-<!-- EDIT: swap this ASCII diagram for a real image once you have one — 
-<p align="center"><img src="path/to/architecture-diagram.png" width="700"></p> -->
-
 ---
 
-## 🛠️ Tech Stack
+## 📜 Submission Checklist Verification
 
-| Layer | Technology |
-|---|---|
-| **Microcontroller** | ESP32 Dev Module |
-| **Sensors** | BMP180, MPU6050, APDS9960, DHT22, SSD1306 OLED |
-| **Firmware** | Embedded C++ / Arduino Framework |
-| **Connectivity** | WiFi (HTTP), Firebase Realtime Database |
-| **Dashboard** | HTML5, CSS3, Vanilla JavaScript |
-| **Storage** | ESP32 NVS Flash (offline logging) |
-
----
-
-## 📌 Hardware Pinout
-
-All I2C sensors share the bus (**SDA = GPIO 21, SCL = GPIO 22**):
-
-| Module | I2C Address | Function |
-|---|---|---|
-| SSD1306 OLED | `0x3C` | Live status display |
-| BMP180 | `0x77` | Pressure & altitude |
-| MPU6050 | `0x68` | Shock/drop detection |
-| APDS9960 | `0x39` | Light (tamper) + proximity (seal) |
-| DHT22 | GPIO 4 (digital) | Temperature & humidity |
-| Alert LED | GPIO 2 | Visual breach indicator |
+- [x] Blog submission post formatted as `.md` (`dhruv-myosa-coldchain.md`).
+- [x] Front matter YAML metadata included (`publishDate`, `title`, `excerpt`, `image`, `tags`).
+- [x] One-line tagline with `>` included.
+- [x] Mandatory headers (`Acknowledgements`, `Overview`, `Demo / Examples`, `Features`, `Usage Instructions`, `Tech Stack`, `Requirements`, `File Structure`, `License`).
+- [x] Image tags formatted as `<p align="center"><img src="..." width="800"><br/><i>Caption</i></p>`.
+- [x] Video tags formatted as `<video controls width="100%"><source src="..." type="video/mp4"></video>`. No YouTube links!
+- [x] Lowercase, no-space file naming (`dhruv-myosa-coldchain.md`).
 
 ---
-
-## 🚀 Setup & Installation
-
-### 1. Flash the Firmware
-```bash
-# Open in Arduino IDE
-DHRUV_Firmware/DHRUV_Firmware.ino
-
-# Install libraries:
-- Adafruit SSD1306 / Adafruit GFX
-- Adafruit BMP085
-- MPU6050 (Electronic Cats or i2cdevlib)
-- Adafruit APDS9960
-- DHT sensor library
-- Firebase ESP Client / HTTPClient (built-in)
-
-# Board: ESP32 Dev Module → Upload
-```
-
-### 2. Configure WiFi & Firebase
-Edit these lines in the firmware before flashing:
-```cpp
-#define WIFI_SSID     "YOUR_WIFI_SSID"
-#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
-#define FIREBASE_HOST "https://your-project.firebaseio.com"
-```
-
-### 3. Run the Dashboard
-Open `web_dashboard/index.html` in any browser — it connects live to Firebase.
-
----
-
-## 🎬 Live Demo
-
-<!-- EDIT: replace with your real image/video paths once captured -->
-<p align="center">
-  <img src="assets/images/hardware-setup.jpg" width="700"><br/>
-  <i>DHRUV node integrated inside a vaccine carrier bag</i>
-</p>
-
-<video controls width="100%">
-  <source src="assets/videos/demo.mp4" type="video/mp4">
-</video>
-
-### 3-Minute Demonstration Script
-| Time | Step | What Happens |
-|---|---|---|
-| 0:00–0:45 | Normal state | Score at 100%, dashboard green |
-| 0:45–1:30 | Thermal breach | Warm object near node → alert fires, score drops |
-| 1:30–2:00 | Tamper | Lid opened → light spike detected, logged |
-| 2:00–2:30 | Shock | Bag gently dropped → G-force spike logged |
-| 2:30–3:00 | Sync | WiFi reconnects → all events push to dashboard |
-
----
-
-## 🌍 Impact
-
-<!-- EDIT: this is your "why it matters" pitch for judges -->
-Over one million ASHA workers in India carry vaccines to remote villages daily with no monitoring. DHRUV directly targets this last-mile blind spot, contributing toward **UN SDG 3: Good Health and Well-being**. A successful deployment could help prevent thousands of ineffective vaccinations annually by giving supervisors visibility they've never had before.
-
----
-
-## 👥 Team
-
-| Name | Role | Institution |
-|---|---|---|
-| **Arin T S** | Team Lead | Saintgits College of Engineering (Autonomous), Kottayam, Kerala |
-| **Andrewjos Sebastian** | Co-Investigator | Saintgits College of Engineering (Autonomous), Kottayam, Kerala |
-| **Dr. Abraham George** | Faculty Mentor | Saintgits College of Engineering (Autonomous), Kottayam, Kerala |
-
----
-
-## 📄 License
-
-This project is open-source under the [MIT License](LICENSE).
-
----
-
-<div align="center">
-
-**Built for MYOSA 6.0** | Saintgits College of Engineering (Autonomous)
-
-</div>
+*Built for MYOSA 6.0 | Saintgits College of Engineering*
