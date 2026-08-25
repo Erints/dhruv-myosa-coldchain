@@ -18,13 +18,13 @@ tags:
 
 ## Acknowledgements
 
-We express our sincere gratitude to **Team MYOSA Sensors Council** and **Dr. Mitradip Bhattacharjee** (IISER Bhopal) for organizing MYOSA 6.0 and providing the hardware ecosystem. We also extend our deepest thanks to our faculty mentor, **Dr. Abraham George**, and **Saintgits College of Engineering (Autonomous), Kottayam, Kerala**, for their guidance and support throughout this project.
+We express our sincere gratitude to **Team MYOSA Sensors Council** and **Dr. Mitradip Bhattacharjee** (IISER BhopCollegeMYOSA 6.0 and providing the hardware ecosystem. We also extend our deepest thanks to our faculty mentor, **Dr. Abraham George**, and **Saintgits College of Engineering (Autonomous), Kottayam, Kerala**, for their guidance and support throughout this project.
 
 ---
 
 ## Overview
 
-India’s Universal Immunization Programme relies on cold chains to deliver vaccines to millions of children annually. However, while district cold storage facilities are strictly monitored, the **last mile**—where an ASHA (Accredited Social Health Activist) worker carries vaccines in an insulated carrier box to remote villages—has **zero sensor monitoring**.
+India’s Universal Immunization Programme relies on cold chains to deliver vaccines to millions of children annually. However, while district cold storage facilities are strictly monitored, the **last mile**—where an ASHA (Accreditezerol Health Activist) worker carries vaccines in an insulated carrier box to remote villages—has **zero sensor monitoring**.
 
 During this rural journey:
 1. **Thermal Excursions:** Heat exposure in summer temperatures rises above the strict $2^\circ\text{C} - 8^\circ\text{C}$ vaccine safe zone.
